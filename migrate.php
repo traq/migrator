@@ -131,20 +131,20 @@ elseif(isset($_REQUEST['migrate']))
 		while($info = $db->fetcharray($fetchseverities))
 			$severities[$info['id']] = $info;
 		
-		// Statusses
-		$statusses = array();
-		$fetchstatusses = $db->query("SELECT * FROM ".DBPF."statustypes ORDER BY id ASC");
-		while($info = $db->fetcharray($fetchstatusses))
-			$statusses[$info['id']] = $info;
+		// statuses
+		$statuses = array();
+		$fetchstatuses = $db->query("SELECT * FROM ".DBPF."statustypes ORDER BY id ASC");
+		while($info = $db->fetcharray($fetchstatuses))
+			$statuses[$info['id']] = $info;
 		
-		$status_new = $statusses['1'];
-		unset($statusses['1']);
-		$oldstatusses = $statusses;
-		$statusses = array();
-		$statusses['1'] = $status_new;
+		$status_new = $statuses['1'];
+		unset($statuses['1']);
+		$oldstatuses = $statuses;
+		$statuses = array();
+		$statuses['1'] = $status_new;
 		
-		foreach($oldstatusses as $oldstatus)
-			$statusses[$oldstatus['id']] = $oldstatus;
+		foreach($oldstatuses as $oldstatus)
+			$statuses[$oldstatus['id']] = $oldstatus;
 		
 		// Types
 		$types = array();
@@ -225,9 +225,9 @@ elseif(isset($_REQUEST['migrate']))
 			)");
 		}
 		
-		// Statusses
-		$statusses[-50] = $statusses[2];
-		foreach($statusses as $status)
+		// statuses
+		$statuses[-50] = $statuses[2];
+		foreach($statuses as $status)
 		{
 			$db->query("INSERT INTO ".DBPF."ticket_status
 			(name,status)
@@ -236,7 +236,7 @@ elseif(isset($_REQUEST['migrate']))
 			'".$status['name']."',
 			'".($status['id'] <= 0 ? 0 : 1)."'
 			)");
-			$statusses[$status['id']]['newid'] = $db->insertid();
+			$statuses[$status['id']]['newid'] = $db->insertid();
 		}
 		
 		// Tickets
@@ -257,7 +257,7 @@ elseif(isset($_REQUEST['migrate']))
 			'".($ticket['versionid'])."',
 			'".($ticket['componentid'])."',
 			'".($ticket['type'])."',
-			'".($statusses[$ticket['status']]['newid'])."',
+			'".($statuses[$ticket['status']]['newid'])."',
 			'".($ticket['priority'])."',
 			'".($ticket['severity'])."',
 			'".($ticket['assigneeid'])."',
@@ -299,7 +299,7 @@ elseif(isset($_REQUEST['migrate']))
 					$newchanges[] = array('property'=>'milestone','from'=>$milestones[$change['fromid']]['milestone'],'to'=>$milestones[$change['toid']]['milestone']);
 				} else if($type == "STATUS") {
 					// Status Change
-					$newchanges[] = array('property'=>'status','from'=>$statusses[$change['fromid']]['name'],'to'=>$statusses[$change['toid']]['name'],'action'=>'mark');
+					$newchanges[] = array('property'=>'status','from'=>$statuses[$change['fromid']]['name'],'to'=>$statuses[$change['toid']]['name'],'action'=>'mark');
 				} else if($type == "PRIORITY") {
 					// Priority Change
 					$newchanges[] = array('property'=>'priority','from'=>$priorities[$change['fromid']]['name'],'to'=>$priorities[$change['toid']]['name']);
@@ -308,10 +308,10 @@ elseif(isset($_REQUEST['migrate']))
 					$newchanges[] = array('property'=>'version','from'=>$versions[$change['fromid']]['version'],'to'=>$versions[$change['toid']]['version']);
 				} else if($type == "REOPEN") {
 					// Ticket Reopen
-					$newchanges[] = array('property'=>'status','from'=>$statusses[$change['fromid']]['name'],'to'=>$statusses[$change['toid']]['name'],'action'=>'reopen');
+					$newchanges[] = array('property'=>'status','from'=>$statuses[$change['fromid']]['name'],'to'=>$statuses[$change['toid']]['name'],'action'=>'reopen');
 				} else if($type == "CLOSE") {
 					// Ticket Close
-					$newchanges[] = array('property'=>'status','from'=>$statusses[$change['fromid']]['name'],'to'=>$statusses[$change['toid']]['name'],'action'=>'close');
+					$newchanges[] = array('property'=>'status','from'=>$statuses[$change['fromid']]['name'],'to'=>$statuses[$change['toid']]['name'],'action'=>'close');
 				} else if($type == "CREATE") {
 					// Ticket Create
 					$newchanges[] = array('property'=>'status','from'=>'','to'=>'1','action'=>'open');
