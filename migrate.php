@@ -234,7 +234,8 @@ elseif(isset($_REQUEST['migrate']))
 			VALUES(
 			".$statusid."
 			'".$status['name']."',
-			'".($status['id'] <= 0 ? 0 : 1)."'
+			'".($status['id'] <= 0 ? 0 : 1)."',
+			'1'
 			)");
 			$statuses[$status['id']]['newid'] = $db->insertid();
 		}
@@ -440,7 +441,8 @@ elseif(isset($_REQUEST['migrate']))
 			VALUES(
 			'".$type['id']."',
 			'".$type['name']."',
-			'*'
+			'*',
+			'1'
 			)");
 		}
 	}
